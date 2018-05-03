@@ -1,0 +1,26 @@
+# Exclude Vagrant development instance details
+.vagrant
+
+# Exclude CONTROL public key
+control.pub
+
+# Exclude Ansible retry files
+*.retry
+
+# Exclude any log files
+*.log
+
+# Exclude IntelliJ project files
+.idea
+
+# Ignore additional Vagrant disk images
+*.vdi
+
+# Exclude deployment binaries
+files/binaries
+
+# Ignore Galaxy install metadata
+.galaxy_install_info
+
+# Don't overwrite each other's configurations
+.deploy.conf
