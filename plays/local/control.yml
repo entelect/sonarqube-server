@@ -1,0 +1,8 @@
+---
+- hosts: control
+  become: true
+  tasks:
+    - name: install python pip
+      package: name={{item}} state=present
+      with_items:
+        - python-pip

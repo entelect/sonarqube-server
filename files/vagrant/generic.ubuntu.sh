@@ -1,3 +1,3 @@
-cat /vagrant/control.pub >> /home/ubuntu/.ssh/authorized_keys
+cat /vagrant/control.pub >> /home/vagrant/.ssh/authorized_keys
 
-chown -R ubuntu:ubuntu /home/ubuntu/.ssh/
+chown -R vagrant:vagrant /home/ubuntu/.ssh/

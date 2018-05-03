@@ -1,0 +1,13 @@
+# Local DEV with Vagrant test target boxes
+
+[sonar]
+sonar01
+
+[db]
+db01
+
+[control]
+control
+
+[control:vars]
+ansible_connection=local

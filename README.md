@@ -22,3 +22,16 @@ to the target hosts.
 If instead you are going to be working on production you should use something
 like `ssh-copy-id infrastructure@192.168.2.160` to add your public key to the
 target host's `~/.ssh/authorized_keys` file.
+
+### Setting up control
+
+Start by running the __control01__ host with `vagrant up control` (this may take
+awhile to download the necessary VM images). Once this completes log on to
+the __control__ host with `vagrant ssh control`.
+
+Now change to the directory containing the __control01__ host plays to run the
+playbook that updates the __control01__ host with the necessary libraries to run
+all our other plays: `cd /vagrant`.
+
+Run the playbook with:
+`ansible-playbook plays/local/control.yml -i inventories/dev/local`.

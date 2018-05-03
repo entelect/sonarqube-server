@@ -1,16 +1,16 @@
 if [ ! -f "/home/ubuntu/.ssh/id_rsa" ]; then
-  ssh-keygen -t rsa -N "" -f /home/ubuntu/.ssh/id_rsa
+  ssh-keygen -t rsa -N "" -f /home/vagrant/.ssh/id_rsa
 fi
 
-cp /home/ubuntu/.ssh/id_rsa.pub /vagrant/control.pub
+cp /home/vagrant/.ssh/id_rsa.pub /vagrant/control.pub
 
-cat << 'SSHEOF' > /home/ubuntu/.ssh/config
+cat << 'SSHEOF' > /home/vagrant/.ssh/config
 Host *
   StrictHostKeyChecking no
   UserKnownHostsFile=/dev/null
 SSHEOF
 
-chown -R ubuntu:ubuntu /home/ubuntu/.ssh/
+chown -R vagrant:vagrant /home/vagrant/.ssh/
 
 sudo apt-get install -y software-properties-common
 sudo apt-add-repository ppa:ansible/ansible
