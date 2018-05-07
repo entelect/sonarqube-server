@@ -12,10 +12,9 @@ SSHEOF
 
 chown -R vagrant:vagrant /home/vagrant/.ssh/
 
-sudo apt-get install -y software-properties-common
-sudo apt-add-repository ppa:ansible/ansible
 sudo apt-get update
-sudo apt-get install -y ansible
+sudo apt-get install -y python3 python3-pip
+sudo pip3 install ansible
 
 # Optional installation of extra roles from Ansible Galaxy
 # cd /vagrant

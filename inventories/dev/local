@@ -3,11 +3,17 @@
 [sonar]
 sonar01
 
-[db]
-db01
-
 [control]
 control
 
+[all:vars]
+ansible_python_interpreter=/usr/bin/python3
+
 [control:vars]
 ansible_connection=local
+
+[sonar:vars]
+sonar_version=7.1
+sonar_db_name=sonar
+sonar_db_user=sonar
+sonar_db_pass=@ud!0D3t3ct!v3

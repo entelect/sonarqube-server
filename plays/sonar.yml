@@ -1,0 +1,123 @@
+---
+- hosts: sonar
+  become: true
+  tasks:
+    - name:
+      apt_repository:
+        repo: ppa:webupd8team/java
+
+    - name: Automatically select the Oracle License
+      shell: echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections
+
+    - name: Install Java 8 & PostgreSQL
+      package: name={{item}} state=present
+      with_items:
+        - oracle-java8-installer
+        - postgresql
+        - postgresql-contrib
+        - unzip
+        - python3-psycopg2
+
+    - name: Copy the SonarQube PostgreSQL setup script
+      copy:
+        src: "../files/sonar/dbSetup.sh"
+        dest: "/tmp/dbSetup.sh"
+        mode: 0744
+        owner: "postgres"
+
+    - name: Strip carriage returns from scripts to ensure this works from Windows VMs
+      replace:
+        path: "/tmp/dbSetup.sh"
+        regexp: "[\r]$"
+        replace: ""
+
+    - name: Create postgres user and DB for SonarQube
+      become: yes
+      become_user: postgres
+      command: "/tmp/dbSetup.sh {{ sonar_db_pass }}"
+
+#    - name: Create postgres user for SonarQube
+#      become: yes
+#      become_user: postgres
+#      postgresql_user:
+#        name: "{{ sonar_db_user }}"
+#        password: 'str[\"md5\"] + md5[ {{ sonar_db_pass }} + {{ sonar_db_user }} ]'
+#        encrypted: yes
+#
+#    - name: Create the sonar database
+#      postgresql_db:
+#        name: "{{ sonar_db_name }}"
+#        owner: "{{ sonar_db_user }}"
+
+    - name: Create the sonar user for running the SonarQube services
+      user:
+        name: sonar
+        comment: System user for running SonarQube
+
+    - name: Download SonarQube
+      get_url:
+        url: "https://sonarsource.bintray.com/Distribution/sonarqube/sonarqube-{{ sonar_version }}.zip"
+        dest: "/srv/sonarqube-{{ sonar_version }}.zip"
+
+    - name: Extract SonarQube
+      unarchive:
+        src: "/srv/sonarqube-{{ sonar_version }}.zip"
+        dest: "/srv"
+        copy: no
+        owner: sonar
+
+    - name: Link this version of sonarqube as the server SonarQube version
+      file:
+        src: "/srv/sonarqube-{{ sonar_version }}"
+        dest: "/srv/sonarqube"
+        state: link
+        owner: sonar
+
+    - name: Configure SonarQube DB username
+      lineinfile:
+        path: "/srv/sonarqube/conf/sonar.properties"
+        regexp: "^sonar.jdbc.username="
+        insertafter: "^#sonar.jdbc.username="
+        line: "sonar.jdbc.username={{ sonar_db_user }}"
+
+    - name: Configure SonarQube DB password
+      lineinfile:
+        path: "/srv/sonarqube/conf/sonar.properties"
+        regexp: "^sonar.jdbc.password="
+        insertafter: "^#sonar.jdbc.password="
+        line: "sonar.jdbc.password={{ sonar_db_pass }}"
+
+    - name: Configure SonarQube DB connection string
+      lineinfile:
+        path: "/srv/sonarqube/conf/sonar.properties"
+        regexp: "sonar.jdbc.url=jdbc:postgresql://localhost/sonar"
+        insertafter: "^#sonar.jdbc.url=jdbc:postgresql://localhost/sonar"
+        line: "sonar.jdbc.url=jdbc:postgresql://localhost/sonar"
+
+    - name: Configure SonarQube to run as the sonar user
+      lineinfile:
+        path: "/srv/sonarqube/bin/linux-x86-64/sonar.sh"
+        regexp: "RUN_AS_USER=sonar"
+        insertafter: "#RUN_AS_USER="
+        line: "RUN_AS_USER=sonar"
+
+    - name: Copy the SonarQube service configuration file
+      copy:
+        src: "../files/sonar/sonarqube.service"
+        dest: "/etc/systemd/system/sonarqube.service"
+
+    - name: Configure OS security limits for the sonar user
+      copy:
+        src: "../files/sonar/sonarqube.limits"
+        dest: "/etc/security/limits.d/99-sonarqube.conf"
+
+    - name: Configure kernel level limits for ElasticSearch
+      copy:
+        src: "../files/sonar/sonarqube.sysctl"
+        dest: "/etc/sysctl.d/99-sonarqube.conf"
+
+    - name: Enable the SonarQube service
+      systemd:
+        state: started
+        daemon_reload: yes
+        name: sonarqube
