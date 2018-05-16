@@ -119,5 +119,6 @@
     - name: Enable the SonarQube service
       systemd:
         state: started
+        enabled: yes
         daemon_reload: yes
         name: sonarqube
