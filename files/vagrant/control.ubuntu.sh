@@ -1,4 +1,4 @@
-if [ ! -f "/home/ubuntu/.ssh/id_rsa" ]; then
+if [ ! -f "/home/vagrant/.ssh/id_rsa" ]; then
   ssh-keygen -t rsa -N "" -f /home/vagrant/.ssh/id_rsa
 fi
 
