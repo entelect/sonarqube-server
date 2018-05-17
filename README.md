@@ -23,10 +23,24 @@ If instead you are going to be working on production you should use something
 like `ssh-copy-id infrastructure@192.168.2.160` to add your public key to the
 target host's `~/.ssh/authorized_keys` file.
 
+### Setting up the Vagrant DEV environment
+
+To set up the Vagrant local DEV environment run the following commands: 
+
+```
+vagrant plugin install vagrant-hostmanager`
+vagrant up
+```
+
 ### Setting up targets
 
-Now to set up the target VM locally on develop, ssh into `control01` and run:
+Now to set up the target VM locally on develop run:
+
 ```
+vagrant ssh
 cd /vagrant
 ansible-playbook plays/sonar.yml -i inventories/dev/local
 ```
+
+Wait a little bit after the play finishes for everything to start up, then try to hit
+[http://localhost:9000](http://localhost:9000).

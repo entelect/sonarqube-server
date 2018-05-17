@@ -2,7 +2,7 @@
 - hosts: sonar
   become: true
   tasks:
-    - name:
+    - name: Add the webupd8team Java PPA
       apt_repository:
         repo: ppa:webupd8team/java
 
