@@ -28,7 +28,7 @@ target host's `~/.ssh/authorized_keys` file.
 To set up the Vagrant local DEV environment run the following commands: 
 
 ```
-vagrant plugin install vagrant-hostmanager`
+vagrant plugin install vagrant-hostmanager
 vagrant up
 ```
 
@@ -44,3 +44,14 @@ ansible-playbook plays/sonar.yml -i inventories/dev/local
 
 Wait a little bit after the play finishes for everything to start up, then try to hit
 [http://localhost:9000](http://localhost:9000).
+
+### Inventories
+
+ * `inventories/dev`: Unencrypted local DEV without any LDAP authentication configured.
+ * `inventories/dev_ldap`: Encrypted local DEV with LDAP authentication configured.
+ 
+To use the encrypted file you need to add the `--vault-id @prompt` option as follows:
+
+```
+ansible-playbook -i inventories/dev_ldap --vault-id @prompt plays/sonar.yml
+```

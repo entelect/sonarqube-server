@@ -10,7 +10,7 @@
          - ssl_certificate     {{ssl_certs_cert_path}}
       nginx_sites:
         default:
-          template: sonar.conf.j2
+          template: nginx.conf.j2
           server_name: sonar.entelect.co.za
   tasks:
     - name: Add the webupd8team Java PPA
@@ -29,7 +29,7 @@
         - unzip
         - python3-psycopg2
 
-    - name: Copy the SonarQube PostgreSQL setup script
+    - name: Copy the Sonarqube PostgreSQL setup script
       copy:
         src: "files/sonar/dbSetup.sh"
         dest: "/tmp/dbSetup.sh"
@@ -42,7 +42,7 @@
         regexp: "[\r]$"
         replace: ""
 
-    - name: Create postgres user and DB for SonarQube
+    - name: Create postgres user and DB for Sonarqube
       become: yes
       become_user: postgres
       command: "/tmp/dbSetup.sh {{ sonar_db_pass }}"
@@ -60,59 +60,47 @@
 #        name: "{{ sonar_db_name }}"
 #        owner: "{{ sonar_db_user }}"
 
-    - name: Create the sonar user for running the SonarQube services
+    - name: Create the sonar user for running the Sonarqube services
       user:
         name: sonar
-        comment: System user for running SonarQube
+        comment: System user for running Sonarqube
 
-    - name: Download SonarQube
+    - name: Download Sonarqube
       get_url:
         url: "https://sonarsource.bintray.com/Distribution/sonarqube/sonarqube-{{ sonar_version }}.zip"
         dest: "/srv/sonarqube-{{ sonar_version }}.zip"
 
-    - name: Extract SonarQube
+    - name: Extract Sonarqube
       unarchive:
         src: "/srv/sonarqube-{{ sonar_version }}.zip"
         dest: "/srv"
         copy: no
         owner: sonar
 
-    - name: Link this version of sonarqube as the server SonarQube version
+    - name: Link this version of sonarqube as the server Sonarqube version
       file:
         src: "/srv/sonarqube-{{ sonar_version }}"
         dest: "/srv/sonarqube"
         state: link
         owner: sonar
 
-    - name: Configure SonarQube DB username
-      lineinfile:
-        path: "/srv/sonarqube/conf/sonar.properties"
-        regexp: "^sonar.jdbc.username="
-        insertafter: "^#sonar.jdbc.username="
-        line: "sonar.jdbc.username={{ sonar_db_user }}"
+    - name: Configure Sonarqube
+      template:
+        src: templates/sonar.properties.j2
+        dest: /srv/sonarqube/conf/sonar.properties
+        owner: sonar
+        group: sonar
+        mode: 0644
+        backup: yes
 
-    - name: Configure SonarQube DB password
-      lineinfile:
-        path: "/srv/sonarqube/conf/sonar.properties"
-        regexp: "^sonar.jdbc.password="
-        insertafter: "^#sonar.jdbc.password="
-        line: "sonar.jdbc.password={{ sonar_db_pass }}"
-
-    - name: Configure SonarQube DB connection string
-      lineinfile:
-        path: "/srv/sonarqube/conf/sonar.properties"
-        regexp: "sonar.jdbc.url=jdbc:postgresql://localhost/sonar"
-        insertafter: "^#sonar.jdbc.url=jdbc:postgresql://localhost/sonar"
-        line: "sonar.jdbc.url=jdbc:postgresql://localhost/sonar"
-
-    - name: Configure SonarQube to run as the sonar user
+    - name: Configure Sonarqube to run as the sonar user
       lineinfile:
         path: "/srv/sonarqube/bin/linux-x86-64/sonar.sh"
         regexp: "RUN_AS_USER=sonar"
         insertafter: "#RUN_AS_USER="
         line: "RUN_AS_USER=sonar"
 
-    - name: Copy the SonarQube service configuration file
+    - name: Copy the Sonarqube service configuration file
       copy:
         src: "files/sonar/sonarqube.service"
         dest: "/etc/systemd/system/sonarqube.service"
@@ -127,7 +115,21 @@
         src: "files/sonar/sonarqube.sysctl"
         dest: "/etc/sysctl.d/99-sonarqube.conf"
 
-    - name: Enable the SonarQube service
+    - name: Install the Sonarqube LDAP plugin
+      get_url:
+        url: "https://sonarsource.bintray.com/Distribution/sonar-ldap-plugin/sonar-ldap-plugin-{{ sonar_ldap_version }}.jar"
+        dest: "/srv/sonarqube/extensions/plugins"
+        owner: sonar
+        group: sonar
+
+    - name: Enable the NGINX service
+      systemd:
+        state: restarted
+        enabled: yes
+        daemon_reload: yes
+        name: nginx
+
+    - name: Enable the Sonarqube service
       systemd:
         state: started
         enabled: yes

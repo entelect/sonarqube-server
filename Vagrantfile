@@ -15,8 +15,8 @@ Vagrant.configure(2) do |config|
 
   config.vm.box = "ubuntu/bionic64"
 
-  config.vm.define "control", primary: true do |h|
-    h.vm.host_name = "control"
+  config.vm.define "control01", primary: true do |h|
+    h.vm.host_name = "control01"
     h.vm.network "private_network", ip: "192.168.135.10"
     h.vm.provision "shell", path: "vagrant/control.ubuntu.sh"
   end

@@ -4,7 +4,7 @@
 sonar01
 
 [control]
-control
+control01
 
 [all:vars]
 ansible_python_interpreter=/usr/bin/python3
@@ -17,4 +17,13 @@ sonar_version=7.1
 sonar_db_name=sonar
 sonar_db_user=sonar
 sonar_db_pass=@ud!0D3t3ct!v3
+
+sonar_ldap_version=2.2.0.608
+sonar_ldap_url=
+sonar_ldap_bind_dn=
+sonar_ldap_bind_pass=
+sonar_ldap_realm=
+sonar_ldap_base_dn=
+sonar_ldap_user_request=
+
 server_name=sonar.entelect.co.za
