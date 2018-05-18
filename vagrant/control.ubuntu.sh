@@ -16,6 +16,7 @@ sudo apt-get update
 sudo apt-get install -y python3 python3-pip
 sudo pip3 install ansible
 
-# Optional installation of extra roles from Ansible Galaxy
-# cd /vagrant
-# ansible-galaxy install -r requirements.yml
+cd /vagrant
+ansible-galaxy install -r requirements.yml
+cp -R /root/.ansible /home/vagrant/.
+chown -R vagrant:vagrant /home/vagrant/.ansible

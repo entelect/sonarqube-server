@@ -1,2 +1,7 @@
 # List of 3rd party roles that need to be installed on control with `ansible-galaxy install -r requirements.yml`
 
+- name: jdauphant.nginx
+  src: jdauphant.nginx
+
+- name: jdauphant.ssl-certs
+  src: jdauphant.ssl-certs

@@ -18,7 +18,7 @@ Vagrant.configure(2) do |config|
   config.vm.define "control", primary: true do |h|
     h.vm.host_name = "control"
     h.vm.network "private_network", ip: "192.168.135.10"
-    h.vm.provision "shell", path: "files/vagrant/control.ubuntu.sh"
+    h.vm.provision "shell", path: "vagrant/control.ubuntu.sh"
   end
 
   config.vm.define "sonar01" do |h|
@@ -30,6 +30,8 @@ Vagrant.configure(2) do |config|
     h.vm.network "private_network", ip: "192.168.135.101"
     h.vm.network "forwarded_port", guest: "9000", host: "9000", host_ip: "127.0.0.1"
     h.vm.network "forwarded_port", guest: "5432", host: "5432", host_ip: "127.0.0.1"
-    h.vm.provision :shell, path: "files/vagrant/generic.ubuntu.sh"
+    h.vm.network "forwarded_port", guest: "80", host: "80", host_ip: "127.0.0.1"
+    h.vm.network "forwarded_port", guest: "443", host: "443", host_ip: "127.0.0.1"
+    h.vm.provision :shell, path: "vagrant/generic.ubuntu.sh"
   end
 end

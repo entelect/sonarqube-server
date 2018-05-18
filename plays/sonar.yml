@@ -1,6 +1,17 @@
 ---
 - hosts: sonar
   become: true
+  roles:
+    - jdauphant.ssl-certs
+    - role: jdauphant.nginx
+      nginx_configs:
+        ssl:
+         - ssl_certificate_key {{ssl_certs_privkey_path}}
+         - ssl_certificate     {{ssl_certs_cert_path}}
+      nginx_sites:
+        default:
+          template: sonar.conf.j2
+          server_name: sonar.entelect.co.za
   tasks:
     - name: Add the webupd8team Java PPA
       apt_repository:
@@ -20,7 +31,7 @@
 
     - name: Copy the SonarQube PostgreSQL setup script
       copy:
-        src: "../files/sonar/dbSetup.sh"
+        src: "files/sonar/dbSetup.sh"
         dest: "/tmp/dbSetup.sh"
         mode: 0744
         owner: "postgres"
@@ -103,17 +114,17 @@
 
     - name: Copy the SonarQube service configuration file
       copy:
-        src: "../files/sonar/sonarqube.service"
+        src: "files/sonar/sonarqube.service"
         dest: "/etc/systemd/system/sonarqube.service"
 
     - name: Configure OS security limits for the sonar user
       copy:
-        src: "../files/sonar/sonarqube.limits"
+        src: "files/sonar/sonarqube.limits"
         dest: "/etc/security/limits.d/99-sonarqube.conf"
 
     - name: Configure kernel level limits for ElasticSearch
       copy:
-        src: "../files/sonar/sonarqube.sysctl"
+        src: "files/sonar/sonarqube.sysctl"
         dest: "/etc/sysctl.d/99-sonarqube.conf"
 
     - name: Enable the SonarQube service

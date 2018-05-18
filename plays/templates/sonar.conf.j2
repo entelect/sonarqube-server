@@ -1,0 +1,26 @@
+# Default server will serve the Angular application and redirect to SSL
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+    server_name {{ server_name }};
+    return 301 https://$server_name$request_uri;
+}
+
+server {
+    listen 443 default_server;
+    listen [::]:443 default_server;
+    ssl on;
+    ssl_certificate {{ssl_certs_cert_path}};
+    ssl_certificate_key {{ssl_certs_privkey_path}};
+
+    server_name {{ server_name }};
+
+    location / {
+        proxy_pass http://localhost:9000/;
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+}
