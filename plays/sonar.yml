@@ -10,7 +10,7 @@
          - ssl_certificate     {{ssl_certs_cert_path}}
       nginx_sites:
         default:
-          template: nginx.conf.j2
+          template: sonar.conf.j2
           server_name: sonar.entelect.co.za
   tasks:
     - name: Add the webupd8team Java PPA

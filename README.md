@@ -39,7 +39,7 @@ Now to set up the target VM locally on develop run:
 ```
 vagrant ssh
 cd /vagrant
-ansible-playbook plays/sonar.yml -i inventories/dev/local
+ansible-playbook plays/sonar.yml -i inventories/dev
 ```
 
 Wait a little bit after the play finishes for everything to start up, then try to hit
