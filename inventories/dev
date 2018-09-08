@@ -13,7 +13,7 @@ ansible_python_interpreter=/usr/bin/python3
 ansible_connection=local
 
 [sonar:vars]
-sonar_version=7.1
+sonar_version=7.3
 sonar_db_name=sonar
 sonar_db_user=sonar
 sonar_db_pass=@ud!0D3t3ct!v3
