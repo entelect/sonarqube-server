@@ -49,9 +49,23 @@ Wait a little bit after the play finishes for everything to start up, then try t
 
  * `inventories/dev`: Unencrypted local DEV without any LDAP authentication configured.
  * `inventories/dev_ldap`: Encrypted local DEV with LDAP authentication configured.
+ * `inventories/prd`: Encrypted production configuration.
+ * `inventories/host_vars/*`: Encrypted additional production certificate configuration variables.
  
 To use the encrypted file you need to add the `--vault-id @prompt` option as follows:
 
 ```
 ansible-playbook -i inventories/dev_ldap --vault-id @prompt plays/sonar.yml
+```
+
+To deploy to production:
+
+```
+ansible-playbook -i inventories/prd --vault-id @prompt plays/sonar.yml
+```
+
+If you ever need to edit an encrypted inventory:
+
+```
+ansible-vault edit inventories/prd
 ```

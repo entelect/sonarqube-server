@@ -2,12 +2,14 @@
 - hosts: sonar
   become: true
   roles:
-    - jdauphant.ssl-certs
+    - role: jdauphant.ssl-certs
+      ssl_certs_local_cert_data: "{{vault_cert_data}}"
+      ssl_certs_local_privkey_data: "{{vault_privkey_data}}"
     - role: jdauphant.nginx
       nginx_configs:
         ssl:
-         - ssl_certificate_key {{ssl_certs_privkey_path}}
-         - ssl_certificate     {{ssl_certs_cert_path}}
+        - ssl_certificate_key {{ssl_certs_privkey_path}}
+        - ssl_certificate     {{ssl_certs_cert_path}}
       nginx_sites:
         default:
           template: sonar.conf.j2

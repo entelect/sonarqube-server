@@ -10,8 +10,6 @@ server {
     listen 443 default_server;
     listen [::]:443 default_server;
     ssl on;
-    ssl_certificate {{ssl_certs_cert_path}};
-    ssl_certificate_key {{ssl_certs_privkey_path}};
 
     server_name {{ server_name }};
 
