@@ -69,7 +69,7 @@
 
     - name: Download Sonarqube
       get_url:
-        url: "https://sonarsource.bintray.com/Distribution/sonarqube/sonarqube-{{ sonar_version }}.zip"
+        url: "https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-{{ sonar_version }}.zip"
         dest: "/srv/sonarqube-{{ sonar_version }}.zip"
 
     - name: Extract Sonarqube
@@ -119,7 +119,7 @@
 
     - name: Install the Sonarqube LDAP plugin
       get_url:
-        url: "https://sonarsource.bintray.com/Distribution/sonar-ldap-plugin/sonar-ldap-plugin-{{ sonar_ldap_version }}.jar"
+        url: "https://binaries.sonarsource.com/Distribution/sonar-ldap-plugin/sonar-ldap-plugin-{{ sonar_ldap_version }}.jar"
         dest: "/srv/sonarqube/extensions/plugins"
         owner: sonar
         group: sonar
